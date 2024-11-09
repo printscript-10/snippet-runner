@@ -16,6 +16,14 @@ repositories {
             password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
         }
     }
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+      }
+    }
 }
 
 configurations {
@@ -26,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'printscript:runner:1.1.4'
     implementation 'printscript:provider:1.1.4'
@@ -42,6 +51,9 @@ dependencies {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
     }
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.austral.ingsis:redis-streams-mvc:0.1.13'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
 }
 
 jacocoTestCoverageVerification {
