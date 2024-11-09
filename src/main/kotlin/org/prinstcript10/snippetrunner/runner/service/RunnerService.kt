@@ -1,6 +1,10 @@
 package org.prinstcript10.snippetrunner.runner.service
 
 import org.prinstcript10.snippetrunner.integration.asset.AssetService
+import org.prinstcript10.snippetrunner.runner.model.dto.FormatSnippetDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.FormatSnippetResponseDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetResponseDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.RunSnippetDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.RunSnippetResponseDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.ValidateSnippetDTO
@@ -44,6 +48,32 @@ class RunnerService(
 
         return RunSnippetResponseDTO(
             outputs = outputProvider.outputs,
+            errors = errorHandler.errors,
+        )
+    }
+
+    fun formatSnippet(formatSnippetDTO: FormatSnippetDTO): FormatSnippetResponseDTO {
+        val inputStream: InputStream = formatSnippetDTO.snippet.byteInputStream()
+        val outputProvider = RunnerOutputProvider()
+        val errorHandler = RunnerErrorHandler()
+
+        val result = runner.format(inputStream, errorHandler, formatSnippetDTO.config, outputProvider)
+
+        return FormatSnippetResponseDTO(
+            formattedSnippet = result,
+            errors = errorHandler.errors,
+        )
+    }
+
+    fun lintSnippet(lintSnippetDTO: LintSnippetDTO): LintSnippetResponseDTO {
+        val inputStream: InputStream = lintSnippetDTO.snippet.byteInputStream()
+        val outputProvider = RunnerOutputProvider()
+        val errorHandler = RunnerErrorHandler()
+
+        runner.analyze(inputStream, errorHandler, lintSnippetDTO.config, outputProvider)
+
+        return LintSnippetResponseDTO(
+            success = errorHandler.errors.isEmpty(),
             errors = errorHandler.errors,
         )
     }

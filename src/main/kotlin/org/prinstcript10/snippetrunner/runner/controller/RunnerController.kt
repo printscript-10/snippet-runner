@@ -1,6 +1,10 @@
 package org.prinstcript10.snippetrunner.runner.controller
 
 import jakarta.validation.Valid
+import org.prinstcript10.snippetrunner.runner.model.dto.FormatSnippetDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.FormatSnippetResponseDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetDTO
+import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetResponseDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.RunSnippetDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.RunSnippetResponseDTO
 import org.prinstcript10.snippetrunner.runner.model.dto.ValidateSnippetDTO
@@ -36,5 +40,19 @@ class RunnerController(
         @Valid @RequestBody snippetDTO: RunSnippetDTO,
     ): ResponseEntity<RunSnippetResponseDTO> {
         return ResponseEntity.ok(runnerService.runSnippet(snippetId, snippetDTO))
+    }
+
+    @PostMapping("/format")
+    fun formatSnippet(
+        @Valid @RequestBody formatSnippetDTO: FormatSnippetDTO,
+    ): FormatSnippetResponseDTO {
+        return runnerService.formatSnippet(formatSnippetDTO)
+    }
+
+    @PostMapping("/lint")
+    fun lintSnippet(
+        @Valid @RequestBody lintSnippetDTO: LintSnippetDTO,
+    ): LintSnippetResponseDTO {
+        return runnerService.lintSnippet(lintSnippetDTO)
     }
 }

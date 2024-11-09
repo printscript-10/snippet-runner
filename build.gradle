@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'printscript:runner:1.1.4'
     implementation 'printscript:provider:1.1.4'
+    implementation 'printscript:linter:1.1.4'
+    implementation 'printscript:formatter:1.1.4'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
