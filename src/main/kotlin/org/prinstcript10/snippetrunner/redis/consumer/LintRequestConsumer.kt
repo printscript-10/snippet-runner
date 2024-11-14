@@ -36,6 +36,7 @@ class LintRequestConsumer
         override fun onMessage(record: ObjectRecord<String, String>) {
             val lintRequest: LintRequestEvent = objectMapper.readValue(record.value)
 
+            println("Received lint request: $lintRequest")
             val asset: String = assetService.getSnippet(lintRequest.snippetId)
 
             try {
@@ -49,6 +50,7 @@ class LintRequestConsumer
                         objectMapper.writeValueAsString(
                             LintResponseEvent(
                                 snippetId = lintRequest.snippetId,
+                                userId = lintRequest.userId,
                                 status = lintStatus,
                             ),
                         ),
@@ -60,6 +62,7 @@ class LintRequestConsumer
                         objectMapper.writeValueAsString(
                             LintResponseEvent(
                                 snippetId = lintRequest.snippetId,
+                                userId = lintRequest.userId,
                                 status = SnippetLintStatus.FAILED,
                             ),
                         ),

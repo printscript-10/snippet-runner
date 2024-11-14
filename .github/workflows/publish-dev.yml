@@ -28,7 +28,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}-dev
           build-args: |
-            USERNAME=printscript-10
+            USERNAME=${{ secrets.GHCR_USERNAME }}
             TOKEN=${{ secrets.TOKEN }}
 
   pull-and-run-image:
@@ -42,12 +42,13 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.0.0
         env:
+          USERNAME: ${{ secrets.GHCR_USERNAME }}
           TOKEN: ${{ secrets.TOKEN }}
         with:
           host: ${{ secrets.DEV_EC2_HOST_DNS }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: TOKEN
+          envs: USERNAME, TOKEN
           script: |
             cd infra
             sudo docker login --username printscript-10 --password $TOKEN ghcr.io
