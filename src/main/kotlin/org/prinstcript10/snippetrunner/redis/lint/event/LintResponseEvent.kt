@@ -1,4 +1,4 @@
-package org.prinstcript10.snippetrunner.redis.event
+package org.prinstcript10.snippetrunner.redis.lint.event
 
 data class LintResponseEvent(
     val snippetId: String,

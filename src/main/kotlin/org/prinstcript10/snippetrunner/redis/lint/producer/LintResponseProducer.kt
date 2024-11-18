@@ -1,4 +1,4 @@
-package org.prinstcript10.snippetrunner.redis.producer
+package org.prinstcript10.snippetrunner.redis.lint.producer
 
 import org.austral.ingsis.redis.RedisStreamProducer
 import org.springframework.beans.factory.annotation.Autowired

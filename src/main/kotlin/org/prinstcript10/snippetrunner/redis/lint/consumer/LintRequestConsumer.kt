@@ -1,14 +1,14 @@
-package org.prinstcript10.snippetrunner.redis.consumer
+package org.prinstcript10.snippetrunner.redis.lint.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import org.austral.ingsis.redis.RedisStreamConsumer
 import org.prinstcript10.snippetrunner.integration.asset.AssetService
-import org.prinstcript10.snippetrunner.redis.event.LintRequestEvent
-import org.prinstcript10.snippetrunner.redis.event.LintResponseEvent
-import org.prinstcript10.snippetrunner.redis.event.SnippetLintStatus
-import org.prinstcript10.snippetrunner.redis.producer.LintResponseProducer
+import org.prinstcript10.snippetrunner.redis.lint.event.LintRequestEvent
+import org.prinstcript10.snippetrunner.redis.lint.event.LintResponseEvent
+import org.prinstcript10.snippetrunner.redis.lint.event.SnippetLintStatus
+import org.prinstcript10.snippetrunner.redis.lint.producer.LintResponseProducer
 import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetDTO
 import org.prinstcript10.snippetrunner.runner.service.RunnerService
 import org.springframework.beans.factory.annotation.Autowired
