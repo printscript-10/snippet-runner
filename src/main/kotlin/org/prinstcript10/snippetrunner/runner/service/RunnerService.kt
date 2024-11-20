@@ -34,12 +34,12 @@ class RunnerService(
         }
     }
 
-    fun runSnippet(snippetId: String, snippet: RunSnippetDTO): RunSnippetResponseDTO {
-        val snippetValue: String = assetService.getSnippet(snippetId)
+    fun runSnippet(runSnippetDTO: RunSnippetDTO): RunSnippetResponseDTO {
+        val snippetValue: String = assetService.getSnippet(runSnippetDTO.snippetId)
 
         val inputStream: InputStream = snippetValue.byteInputStream()
 
-        val inputProvider = RunnerInputProvider(snippet.inputs)
+        val inputProvider = RunnerInputProvider(runSnippetDTO.inputs)
         val outputProvider = RunnerOutputProvider()
         val readEnvProvider = RunnerReadEnvProvider()
         val errorHandler = RunnerErrorHandler()

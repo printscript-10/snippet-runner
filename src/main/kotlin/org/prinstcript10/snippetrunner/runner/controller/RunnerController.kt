@@ -12,7 +12,6 @@ import org.prinstcript10.snippetrunner.runner.service.RunnerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -34,12 +33,11 @@ class RunnerController(
         return runnerService.validateSnippet(snippetDTO)
     }
 
-    @PostMapping("/run/{snippetId}")
+    @PostMapping("/run")
     fun runSnippet(
-        @PathVariable("snippetId") snippetId: String,
-        @Valid @RequestBody snippetDTO: RunSnippetDTO,
+        @Valid @RequestBody runSnippetDTO: RunSnippetDTO,
     ): ResponseEntity<RunSnippetResponseDTO> {
-        return ResponseEntity.ok(runnerService.runSnippet(snippetId, snippetDTO))
+        return ResponseEntity.ok(runnerService.runSnippet(runSnippetDTO))
     }
 
     @PostMapping("/format")

@@ -36,7 +36,7 @@ class FormatRequestConsumer
         override fun onMessage(record: ObjectRecord<String, String>) {
             val formatRequest: FormatRequestEvent = objectMapper.readValue(record.value)
 
-            println("Received lint request: $formatRequest")
+            println("Received format request: $formatRequest")
             val asset: String = assetService.getSnippet(formatRequest.snippetId)
 
             try {
