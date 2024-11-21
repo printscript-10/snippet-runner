@@ -13,6 +13,7 @@ import org.prinstcript10.snippetrunner.runner.model.handlers.RunnerInputProvider
 import org.prinstcript10.snippetrunner.runner.model.handlers.RunnerOutputProvider
 import org.prinstcript10.snippetrunner.runner.model.handlers.RunnerReadEnvProvider
 import org.prinstcript10.snippetrunner.shared.exception.BadRequestException
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import runner.Runner
@@ -23,18 +24,23 @@ class RunnerService(
     @Autowired private val assetService: AssetService,
 ) {
     private val runner: Runner = Runner("1.1")
+    private val logger = LoggerFactory.getLogger(RunnerService::class.java)
 
     fun validateSnippet(snippet: ValidateSnippetDTO) {
+        logger.info("validating snippet: ${snippet.snippet}")
         val inputStream: InputStream = snippet.snippet.byteInputStream()
         val errorHandler = RunnerErrorHandler()
         runner.validate(inputStream, errorHandler)
 
         if (errorHandler.errors.isNotEmpty()) {
+            logger.error("Error validating snippet: ${errorHandler.errors.first()}")
             throw BadRequestException(errorHandler.errors.joinToString("\n"))
         }
+        logger.info("Snippet validated successfully")
     }
 
     fun runSnippet(runSnippetDTO: RunSnippetDTO): RunSnippetResponseDTO {
+        logger.info("Running snippet: ${runSnippetDTO.snippetId}")
         val snippetValue: String = assetService.getSnippet(runSnippetDTO.snippetId)
 
         val inputStream: InputStream = snippetValue.byteInputStream()
@@ -45,6 +51,7 @@ class RunnerService(
         val errorHandler = RunnerErrorHandler()
 
         runner.execute(inputStream, outputProvider, errorHandler, inputProvider, readEnvProvider)
+        logger.info("Snippet execution completed")
 
         return RunSnippetResponseDTO(
             outputs = outputProvider.outputs,
@@ -53,11 +60,13 @@ class RunnerService(
     }
 
     fun formatSnippet(formatSnippetDTO: FormatSnippetDTO): FormatSnippetResponseDTO {
+        logger.info("Formatting snippet: ${formatSnippetDTO.snippet}")
         val inputStream: InputStream = formatSnippetDTO.snippet.byteInputStream()
         val outputProvider = RunnerOutputProvider()
         val errorHandler = RunnerErrorHandler()
 
         val result = runner.format(inputStream, errorHandler, formatSnippetDTO.config, outputProvider)
+        logger.info("Snippet format completed")
 
         return FormatSnippetResponseDTO(
             formattedSnippet = result,
@@ -66,11 +75,13 @@ class RunnerService(
     }
 
     fun lintSnippet(lintSnippetDTO: LintSnippetDTO): LintSnippetResponseDTO {
+        logger.info("Linting snippet: ${lintSnippetDTO.snippet}")
         val inputStream: InputStream = lintSnippetDTO.snippet.byteInputStream()
         val outputProvider = RunnerOutputProvider()
         val errorHandler = RunnerErrorHandler()
 
         runner.analyze(inputStream, errorHandler, lintSnippetDTO.config, outputProvider)
+        logger.info("Snippet lint completed")
 
         return LintSnippetResponseDTO(
             success = errorHandler.errors.isEmpty(),
