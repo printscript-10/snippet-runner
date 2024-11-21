@@ -11,6 +11,7 @@ import org.prinstcript10.snippetrunner.redis.format.event.SnippetFormatStatus
 import org.prinstcript10.snippetrunner.redis.format.producer.FormatResponseProducer
 import org.prinstcript10.snippetrunner.runner.model.dto.FormatSnippetDTO
 import org.prinstcript10.snippetrunner.runner.service.RunnerService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.connection.stream.ObjectRecord
@@ -33,10 +34,12 @@ class FormatRequestConsumer
         private val formatResponseProducer: FormatResponseProducer,
     ) : RedisStreamConsumer<String>(streamName, groupName, redis) {
 
+        private val logger = LoggerFactory.getLogger(FormatRequestConsumer::class.java)
+
         override fun onMessage(record: ObjectRecord<String, String>) {
             val formatRequest: FormatRequestEvent = objectMapper.readValue(record.value)
 
-            println("Received format request: $formatRequest")
+            logger.info("Received format request: $formatRequest")
             val asset: String = assetService.getSnippet(formatRequest.snippetId)
 
             try {
@@ -58,8 +61,8 @@ class FormatRequestConsumer
                     )
                 }
             } catch (e: Exception) {
+                logger.error("Error while consuming format request:", e)
                 runBlocking {
-                    println(e)
                     formatResponseProducer.publishEvent(
                         objectMapper.writeValueAsString(
                             FormatResponseEvent(
@@ -72,7 +75,7 @@ class FormatRequestConsumer
                     )
                 }
             } finally {
-                // LOGEAR QUE TERMINO LA CUESTION
+                logger.info("Format request consumed successfully: $formatRequest")
             }
         }
 

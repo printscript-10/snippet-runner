@@ -9,6 +9,7 @@ import org.prinstcript10.snippetrunner.redis.testCase.event.TestCaseResponseEven
 import org.prinstcript10.snippetrunner.redis.testCase.producer.TestCaseResponseProducer
 import org.prinstcript10.snippetrunner.runner.model.dto.RunSnippetDTO
 import org.prinstcript10.snippetrunner.runner.service.RunnerService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.connection.stream.ObjectRecord
@@ -30,10 +31,12 @@ class TestCaseRequestConsumer
         private val testCaseResponseProducer: TestCaseResponseProducer,
     ) : RedisStreamConsumer<String>(streamName, groupName, redis) {
 
+        private val logger = LoggerFactory.getLogger(TestCaseRequestConsumer::class.java)
+
         override fun onMessage(record: ObjectRecord<String, String>) {
             val testCaseRequest: TestCaseRequestEvent = objectMapper.readValue(record.value)
 
-            println("Received test case request: $testCaseRequest")
+            logger.info("Received test case request: $testCaseRequest")
 
             try {
                 val testCaseResponse = runnerService.runSnippet(
@@ -52,6 +55,7 @@ class TestCaseRequestConsumer
                     )
                 }
             } catch (e: Exception) {
+                logger.error("Error consuming test case request:", e)
                 runBlocking {
                     testCaseResponseProducer.publishEvent(
                         objectMapper.writeValueAsString(
@@ -64,7 +68,7 @@ class TestCaseRequestConsumer
                     )
                 }
             } finally {
-                // LOGEAR QUE TERMINO LA CUESTION
+                logger.info("Test case request consumed successfully")
             }
         }
 

@@ -11,6 +11,7 @@ import org.prinstcript10.snippetrunner.redis.lint.event.SnippetLintStatus
 import org.prinstcript10.snippetrunner.redis.lint.producer.LintResponseProducer
 import org.prinstcript10.snippetrunner.runner.model.dto.LintSnippetDTO
 import org.prinstcript10.snippetrunner.runner.service.RunnerService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.connection.stream.ObjectRecord
@@ -33,10 +34,12 @@ class LintRequestConsumer
         private val lintResponseProducer: LintResponseProducer,
     ) : RedisStreamConsumer<String>(streamName, groupName, redis) {
 
+        private val logger = LoggerFactory.getLogger(LintRequestConsumer::class.java)
+
         override fun onMessage(record: ObjectRecord<String, String>) {
             val lintRequest: LintRequestEvent = objectMapper.readValue(record.value)
 
-            println("Received lint request: $lintRequest")
+            logger.info("Received lint request: $lintRequest")
             val asset: String = assetService.getSnippet(lintRequest.snippetId)
 
             try {
@@ -57,6 +60,7 @@ class LintRequestConsumer
                     )
                 }
             } catch (e: Exception) {
+                logger.error("Error while consuming lint request:", e)
                 runBlocking {
                     lintResponseProducer.publishEvent(
                         objectMapper.writeValueAsString(
@@ -69,7 +73,7 @@ class LintRequestConsumer
                     )
                 }
             } finally {
-                // LOGEAR QUE TERMINO LA CUESTION
+                logger.info("Lint request consumed successfully: $lintRequest")
             }
         }
 
