@@ -12,6 +12,7 @@ import org.prinstcript10.snippetrunner.runner.service.RunnerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -52,5 +53,10 @@ class RunnerController(
         @Valid @RequestBody lintSnippetDTO: LintSnippetDTO,
     ): LintSnippetResponseDTO {
         return runnerService.lintSnippet(lintSnippetDTO)
+    }
+
+    @GetMapping("topo")
+    fun topo() {
+        println("topo endpoint")
     }
 }
